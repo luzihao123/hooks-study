@@ -1,0 +1,6 @@
+provider还是要   使用contextType 后 consumer可以省略
+
+先实例化一个context  命名  const BatteryContext = createContext()
+在组件中使用,写一个静态方法   static contextType = BatteryContext  声明contextType， 
+在render中就有  this.context，  为父组件中context值
+父组件仍要provider 

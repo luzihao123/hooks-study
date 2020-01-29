@@ -1,0 +1,25 @@
+父组件重新渲染时会让子组件也重新渲染，可以优化
+1.shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.name == this.props.name) {
+	  return false
+	} else {
+	  return true
+	}
+  }
+  对比传入的属性
+2. 导入import {PureComponent} from 'react'
+子组件继承  class  xx extends PureComponent
+可以对传入属性本身进行对比，如果一致就不重新渲染，
+注意点：
+1.传入属性是对象时候不能对比
+2.子组件如果传入内联函数，pureComponent不能起对比效果
+  可以在子组件上使用类中声明的函数来避免，使用箭头函数的方法来避免this指向不正确
+  
+对于无状态组件，可以使用memo,起到pureComponent的效果
+import {memo} from 'react'
+对子组件使用memo包裹
+const xx = memo(
+  function Foo(props) {
+    return <div></div>
+  }
+)

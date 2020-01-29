@@ -1,0 +1,44 @@
+context 提供了数据在组件树中传递，而不必一级一级，类似于全局变量
+
+context 实例对象  可以派生出两个实例对象 <Provider>  <Consumer>
+createContext(defaultValue)  定义时可以传入默认值
+在consumer中，传递一个函数，参数为context值
+例子：
+
+const BatterContext = createContext()
+class Leaf extends Component {
+  render () {
+     <BatterContext.Consumer>
+        {
+          batter => <h1>{batter}</h1>
+        }
+      </BatterContext.Consumer> 
+  }
+}
+
+class Middle extends Component {
+  render () {
+    return <Leaf /> 
+  }
+}
+
+<BatterContext.Provider value={60}>
+   <Middle />
+</BatterContext.Provider>
+
+如果有多个context, 在定义一个 const  xx = createContext()
+<xx.Provider>  与原provider嵌套，顺序不重要
+consumer 中也使用嵌套语法
+<BatteryContext.Consumer>
+{
+  batter=>(
+    <xx.Consumer>
+    {
+      xx=>{batter}{xx}
+    }
+    </xx.Consumer>
+  )
+}
+</BatteryContext.Consumer>
+
+

@@ -1,0 +1,35 @@
+延迟加载的途径
+1.webpack的code splitting
+2.import (新属性)
+
+webpack会把import的代码进行拆分
+先导出lazy   import React,{Component,lazy,Suspense} from 'react'
+写一个函数  定义一个组件
+const About = lazy(()=>import('./About.jsx'))
+
+用了lazy后要使用suspense,用这个组件(Suspense)包裹被导入的组件
+在render中  <Suspense fallback={<div>loading</div>}>
+              <About />
+            </Suspense>
+fallback 要为一个组件，用于加载中显示
+
+如果要把拆分的js文件命名，可以使用webpack的注释语法
+const About = lazy(()=>import(/* webpackChunkName: "about" */'./About.jsx'))
+会把独立加载的文件命名为about
+
+加载错误时候：
+利用componenDidCatch 生命周期
+componenDidCatch(){
+  this.setState({
+    hasError: true
+  })
+}
+用来捕获错误，然后可以加载另一个dom
+
+另一种方法：
+使用静态方法,可以在错误时设置state中的属性
+static getDerivedStateFromError () {
+  return {
+    hasError: true
+  }
+}
