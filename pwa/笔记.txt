@@ -1,0 +1,84 @@
+navigator对象下有serviceWorker
+用register可以注册，第一个参数为serviceWorker的脚本地址
+第二个参数为一个对象，可指定作用域
+serviceWorker脚本中有self对象，包含三个事件
+install: 安装后执行，但不会立刻生效
+activate: 激活事件
+fetch: 请求资源事件
+
+install,activate事件回调中有waitUntil方法可以在此事件后执行
+
+
+self.skipWaiting()方法可以直接激活serviceWorker
+self.clients.claim()方法可以让页面首次加载同样受到serviceWorker控制，默认
+首次是不受控制的
+
+fetch用法
+可以直接传入调用传入参数，也可以new一个Request对象后传入，在then回调中用response.json()方法可以把
+返回值转化为json对象
+fetch('/userinfo.json', {
+    method: 'GET',
+    //body
+    headers: new Headers(),
+    credentials: 'include'
+}).then(response => response.json()).then(info=>{
+    console.log(info)
+})
+      
+const req = new Request('/userinfo.json', {
+  method: 'GET',
+  //body
+  headers: new Headers(),
+  credentials: 'include'
+})
+fetch(req).then(response => response.json()).then(info=>{
+  console.log(info)
+})
+
+cacheAIP  实现离线功能
+利用serviceWorker的三个事件回调，在install中拉起并缓存必要资源，
+在activate中清楚上一个版本遗留资源
+在fetch中查询并返回缓存中的资源
+
+install中
+利用全局对象caches, caches.open()打开缓存空间，并传入缓存名字，
+open得到一个promise，在then方法中得到缓存，
+用addAll()存入缓存，addAll()的参数为一个数组，每一项为资源的路径
+event.waitUntil(caches.open(CACHE_NAME).then(cache=>{
+  cache.addAll([
+    '/',
+    './index.css'
+  ])
+}))
+
+fetch中
+调用event.respondWith()打开缓存，在then中得到缓存空间
+调用cache.match()传入event.request 得到一个response对象,
+判断是否存在response，如果存在则返回
+不存在就调用fetch方法 并用cache.put()缓存新的资源
+cache.put()传入两个参数，一个为event.request ,另一个就是response，因为response
+是流式的，只能读取一次，用response.clone()
+event.respondWith(caches.open(CACHE_NAME).then(cache=>{
+    return cache.match(event.request).then(response=>{
+      if(response) {
+        return response
+      }
+      return fetch(event.request).then(response=>{
+        cache.put(event.request, response.clone())
+        return response
+      })
+    })
+  }))
+
+  
+activate中
+根据cache名字清理旧的缓存
+利用caches.keys()得到缓存名字，对比名字后可以调用caches.delete()清除缓存，
+caches.delete()需要传入缓存名字，
+ event.waitUntil(caches.keys().then(cacheNames => {
+    return Promise.all(cacheNames.map(cacheName=>{
+      if (cacheName != CACHE_NAME) {
+        return caches.delete(cacheName)
+      }
+    }))
+  }))

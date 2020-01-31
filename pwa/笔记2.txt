@@ -1,0 +1,4 @@
+直接在页面中可以用Notification.permission查看页面允许通知的情况
+Notification.requestPermission()  方法可以弹出是否允许通知的框   只有在页面上下文中才可以弹出
+在页面中通知的方法  new Notification('hello', {body: 'vdsvsdvs'})  
+在serviceworker中通知的方法 self.registration.showNotification('hello', {body:'123'})
