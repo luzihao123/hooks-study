@@ -1,0 +1,7 @@
+npx create-react-app  train-tickets
+在node_modules中的react-scripts文件夹中bin目录可以看到子命令分别
+调用了scripts中的文件，依次打开可以看到每个命令的配置，
+从config目录中读取webpack配置，start命令使用了webpack-dev-server
+为了改动构建过程，修改webpack，执行 npm run eject, 可以将代码释放到项目中
+
+
