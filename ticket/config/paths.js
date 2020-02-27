@@ -54,14 +54,40 @@ module.exports = {
   appPath: resolveApp('.'),
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
-  appHtml: resolveApp('public/index.html'),
-  appQueryHtml: resolveApp('public/query.html'),
-  appTicketHtml: resolveApp('public/ticket.html'),
-  appOrderHtml: resolveApp('public/order.html'),
-  appIndexJs: resolveModule(resolveApp, 'src/index/index'),
-  appQueryJs: resolveModule(resolveApp, 'src/query/index'),
-  appTicketJs: resolveModule(resolveApp, 'src/ticket/index'),
-  appOrderJs: resolveModule(resolveApp, 'src/order/index'),
+  appPages: [
+    {
+      name: "order",
+      title: "order",
+      appHtml: resolveApp("public/order.html"),
+      appIndexJs: resolveApp("src/order/index.js")
+    },
+    {
+      name: "index",
+      title: "index",
+      appHtml: resolveApp("public/index.html"),
+      appIndexJs: resolveApp("src/index/index.js")
+    },
+    {
+      name: "ticket",
+      title: "ticket",
+      appHtml: resolveApp("public/ticket.html"),
+      appIndexJs: resolveApp("src/ticket/index.js")
+    },
+    {
+      name: "query",
+      title: "query",
+      appHtml: resolveApp("public/query.html"),
+      appIndexJs: resolveApp("src/query/index.js")
+    }
+  ],
+  // appHtml: resolveApp('public/index.html'),
+  // appQueryHtml: resolveApp('public/query.html'),
+  // appTicketHtml: resolveApp('public/ticket.html'),
+  // appOrderHtml: resolveApp('public/order.html'),
+  // appIndexJs: resolveModule(resolveApp, 'src/index/index'),
+  // appQueryJs: resolveModule(resolveApp, 'src/query/index'),
+  // appTicketJs: resolveModule(resolveApp, 'src/ticket/index'),
+  // appOrderJs: resolveModule(resolveApp, 'src/order/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),

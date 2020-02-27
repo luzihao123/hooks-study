@@ -126,6 +126,51 @@ module.exports = function(webpackEnv) {
     return loaders;
   };
 
+  const htmlPlugins = [];
+ 
+  paths.appPages.forEach(appPage => {
+    htmlPlugins.push(
+      new HtmlWebpackPlugin(
+        Object.assign(
+          {},
+          {
+            inject: true,
+            template: appPage.appHtml,
+            filename: `${appPage.name}.html`,
+            title: appPage.title,
+            chunks: [appPage.name]
+          },
+          isEnvProduction
+            ? {
+              minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+            : undefined
+        )
+      ),
+    )
+  });
+
+  let entries = {};
+ 
+  paths.appPages.forEach(appPage => {
+    entries[appPage.name] = [
+      appPage.appIndexJs,
+      isEnvDevelopment && require.resolve('react-dev-utils/webpackHotDevClient')
+    ].filter(Boolean);
+  });
+
+  console.log(entries)
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
@@ -137,16 +182,7 @@ module.exports = function(webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry:  {
-      index: [paths.appIndexJs, isEnvDevelopment &&
-        require.resolve('react-dev-utils/webpackHotDevClient')].filter(Boolean),
-      ticket: [paths.appTicketJs, isEnvDevelopment &&
-        require.resolve('react-dev-utils/webpackHotDevClient')].filter(Boolean),
-      query: [paths.appQueryJs, isEnvDevelopment &&
-        require.resolve('react-dev-utils/webpackHotDevClient')].filter(Boolean),
-      order: [paths.appOrderJs, isEnvDevelopment &&
-        require.resolve('react-dev-utils/webpackHotDevClient')].filter(Boolean),
-    },
+    entry:  entries,
     output: {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
@@ -156,6 +192,7 @@ module.exports = function(webpackEnv) {
       // In development, it does not produce real files.
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
+        // : isEnvDevelopment && 'static/js/bundle.js',
         : isEnvDevelopment && 'static/js/[name].js',
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
@@ -498,115 +535,115 @@ module.exports = function(webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
-      
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appQueryHtml,
-            fileName: 'query.html',
-            chunk: ['query']
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appTicketHtml,
-            fileName: 'ticket.html',
-            chunk: ['ticket']
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appOrderHtml,
-            fileName: 'order.html',
-            chunk: ['order']
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appHtml,
-            fileName: 'index.html',
-            chunk: ['index']
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
+      ...htmlPlugins,
+      // new HtmlWebpackPlugin(
+      //   Object.assign(
+      //     {},
+      //     {
+      //       inject: true,
+      //       template: paths.appQueryHtml,
+      //       fileName: 'query.html',
+      //       chunk: ['query']
+      //     },
+      //     isEnvProduction
+      //       ? {
+      //           minify: {
+      //             removeComments: true,
+      //             collapseWhitespace: true,
+      //             removeRedundantAttributes: true,
+      //             useShortDoctype: true,
+      //             removeEmptyAttributes: true,
+      //             removeStyleLinkTypeAttributes: true,
+      //             keepClosingSlash: true,
+      //             minifyJS: true,
+      //             minifyCSS: true,
+      //             minifyURLs: true,
+      //           },
+      //         }
+      //       : undefined
+      //   )
+      // ),
+      // new HtmlWebpackPlugin(
+      //   Object.assign(
+      //     {},
+      //     {
+      //       inject: true,
+      //       template: paths.appTicketHtml,
+      //       fileName: 'ticket.html',
+      //       chunk: ['ticket']
+      //     },
+      //     isEnvProduction
+      //       ? {
+      //           minify: {
+      //             removeComments: true,
+      //             collapseWhitespace: true,
+      //             removeRedundantAttributes: true,
+      //             useShortDoctype: true,
+      //             removeEmptyAttributes: true,
+      //             removeStyleLinkTypeAttributes: true,
+      //             keepClosingSlash: true,
+      //             minifyJS: true,
+      //             minifyCSS: true,
+      //             minifyURLs: true,
+      //           },
+      //         }
+      //       : undefined
+      //   )
+      // ),
+      // new HtmlWebpackPlugin(
+      //   Object.assign(
+      //     {},
+      //     {
+      //       inject: true,
+      //       template: paths.appOrderHtml,
+      //       fileName: 'order.html',
+      //       chunk: ['order']
+      //     },
+      //     isEnvProduction
+      //       ? {
+      //           minify: {
+      //             removeComments: true,
+      //             collapseWhitespace: true,
+      //             removeRedundantAttributes: true,
+      //             useShortDoctype: true,
+      //             removeEmptyAttributes: true,
+      //             removeStyleLinkTypeAttributes: true,
+      //             keepClosingSlash: true,
+      //             minifyJS: true,
+      //             minifyCSS: true,
+      //             minifyURLs: true,
+      //           },
+      //         }
+      //       : undefined
+      //   )
+      // ),
+      // new HtmlWebpackPlugin(
+      //   Object.assign(
+      //     {},
+      //     {
+      //       inject: true,
+      //       template: paths.appHtml,
+      //       fileName: 'index.html',
+      //       chunk: ['index']
+      //     },
+      //     isEnvProduction
+      //       ? {
+      //           minify: {
+      //             removeComments: true,
+      //             collapseWhitespace: true,
+      //             removeRedundantAttributes: true,
+      //             useShortDoctype: true,
+      //             removeEmptyAttributes: true,
+      //             removeStyleLinkTypeAttributes: true,
+      //             keepClosingSlash: true,
+      //             minifyJS: true,
+      //             minifyCSS: true,
+      //             minifyURLs: true,
+      //           },
+      //         }
+      //       : undefined
+      //   )
+      // ),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
