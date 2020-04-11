@@ -4,7 +4,6 @@ import './Candidate.css'
 import URI from 'urijs'
 import dayjs from 'dayjs'
 import {TrainContext} from './context'
-import { setTickets } from './actions'
 
 const Channel = memo(function Channel(props) {
   const {

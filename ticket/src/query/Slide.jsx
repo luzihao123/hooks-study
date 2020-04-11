@@ -147,11 +147,11 @@ const Slide = memo(function Slide(props) {
 
   useEffect(()=>{
     onStartChanged(startHours)
-  }, [startHours])
+  }, [onStartChanged, startHours])
 
   useEffect(()=>{
     onEndChanged(endHours)
-  }, [endHours])
+  }, [endHours, onEndChanged])
   
 
   

@@ -44,9 +44,9 @@ paths.appPages.forEach(appPage => {
   }
 });
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-  process.exit(1);
-}
+// if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+//   process.exit(1);
+// }
 
 // Generate configuration
 const config = configFactory('production');

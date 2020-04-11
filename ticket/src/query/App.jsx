@@ -69,7 +69,7 @@ function App(props) {
     dispatch(setDepartDate(h0(dayjs(date).valueOf())))
     dispatch(setHighSpeed(highSpeed==='true'))
     dispatch(setSearchParsed(true))
-  }, [])
+  }, [dispatch])
 
   useEffect(()=>{
     if (!searchParsed) {
@@ -92,7 +92,7 @@ function App(props) {
     fetch(url).then(response=>response.json()).then(res=>{
       const {dataMap: {
         directTrainInfo: {
-          trains: trains,
+          trains,
           filter: {
             ticketType,
             trainType,
@@ -107,22 +107,7 @@ function App(props) {
       dispatch(setDepartStations(depStation))
       dispatch(setArriveStations(arrStation))
     })
-  }, [
-    from, to,
-    departDate,
-    highSpeed,
-    searchParsed,
-    orderType,
-    onlyTickets,
-    checkedTicketTypes,
-    checkedTrainTypes,
-    checkedDepartStations,
-    checkedArriveStations,
-    departTimeStart,
-    departTimeEnd,
-    arriveTimeStart,
-    arriveTimeEnd
-  ])
+  }, [from, to, departDate, highSpeed, searchParsed, orderType, onlyTickets, checkedTicketTypes, checkedTrainTypes, checkedDepartStations, checkedArriveStations, departTimeStart, departTimeEnd, arriveTimeStart, arriveTimeEnd, dispatch])
 
   const onBack = useCallback(()=>{
     window.history.back()
@@ -151,7 +136,7 @@ function App(props) {
       setArriveTimeEnd,
       setArriveTimeStart
     },dispatch)
-  }, [])
+  }, [dispatch])
 
   if (!searchParsed) {
     return null

@@ -65,7 +65,7 @@ function App(props) {
     dispatch(setDepartDate(h0(dayjs(date).valueOf())))
     dispatch(setSearchParsed(true))
 
-  }, [])
+  }, [dispatch])
 
   useEffect(()=>{
     document.title = trainNumber
@@ -95,7 +95,7 @@ function App(props) {
       dispatch(setDurationStr(durationStr))
       dispatch(setTickets(candidates))
     })
-  }, [searchParsed])
+  }, [departDate, dispatch, searchParsed, trainNumber])
 
   const onBack = useCallback(()=>{
     window.history.back()
@@ -112,7 +112,7 @@ function App(props) {
     return bindActionCreators({
       toggleIsScheduleVisible
     }, dispatch)
-  }, [])
+  }, [dispatch])
 
 
   if (!searchParsed) {

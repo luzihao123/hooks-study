@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import React, {
   useCallback,
   useEffect,
-  userMemo,
   useMemo
 } from 'react'
 import URI from 'urijs'
@@ -29,7 +28,10 @@ import {
   createChild,
   removePassenger,
   updatePassenger,
-  hideMenu
+  hideMenu,
+  showGenderMenu,
+  showFollowAdultMenu,
+  showTicketTypeMenu
 } from './actions'
 import { bindActionCreators } from 'redux'
 
@@ -73,7 +75,7 @@ function App(props) {
     dispatch(setDepartDate(dayjs(date).valueOf()))
     dispatch(setSearchParsed(true))
 
-  }, [])
+  }, [dispatch])
 
   useEffect(()=>{
     if (!searchParsed) return
@@ -84,28 +86,31 @@ function App(props) {
       .setSearch('date', dayjs(departDate).format('YYYY-MM-DD'))
       .toString()
     dispatch(featchInitial(url))
-  }, [
-    searchParsed,
-    arriveStation,
-    departStation,
-    seatType,
-    departDate
-  ])
+  }, [searchParsed, arriveStation, departStation, seatType, departDate, dispatch])
 
   const passengersCbs = useMemo(()=>{
     return bindActionCreators({
       createAdult,
       createChild,
       removePassenger,
-      updatePassenger
+      updatePassenger,
+      showGenderMenu,
+      showFollowAdultMenu,
+      showTicketTypeMenu
     }, dispatch)
-  }, [])
+  }, [dispatch])
 
   const menuCbs = useMemo(()=>{
     return bindActionCreators({
       hideMenu
     },dispatch)
-  }, [])
+  }, [dispatch])
+
+  const chooseCbs = useMemo(()=>{
+    return  bindActionCreators({
+      updatePassenger
+    }, dispatch)
+  }, [dispatch])
 
   if (!searchParsed) {
     return null
@@ -132,6 +137,16 @@ function App(props) {
       </div>
       <Ticket price={price} type={seatType}/>
       <Passengers passengers={passengers} {...passengersCbs}/>
+      {
+        passengers.length > 0 && (
+          <Choose 
+            passengers={passengers}
+            {...chooseCbs}
+          />
+        )
+      }
+      <Account length={passengers.length} price={price}/>
+      
       <Menu show={isMenuVisible} {...menu} {...menuCbs}/>
     </div>
   )

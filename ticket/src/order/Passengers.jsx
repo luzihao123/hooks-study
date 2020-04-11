@@ -2,19 +2,23 @@ import React, { memo } from 'react';
 
 import PropTypes from 'prop-types'
 import './Passengers.css'
+import { useMemo } from 'react';
 
 
 const Passenger = memo(function Passenger(props) {
   const {
     id,
     name,
-    followAdult,
     ticketType,
     licenceNo,
     gender,
     birthday,
     onRemove,
-    onUpdate
+    onUpdate,
+    showGenderMenu,
+    showFollowAdultMenu,
+    showTicketTypeMenu,
+    followAdultName
   } = props
 
   const idAdult = ticketType === 'adult'
@@ -31,7 +35,7 @@ const Passenger = memo(function Passenger(props) {
           value={name}
           onChange={(e)=> onUpdate(id, {name: e.target.value})}
         />
-        <label className="ticket-type">
+        <label className="ticket-type" onClick={()=>showTicketTypeMenu(id)}>
           {idAdult? '成人票':'儿童票'}
         </label>
       </li>
@@ -56,6 +60,7 @@ const Passenger = memo(function Passenger(props) {
             type="text" 
             className='input gender'
             placeholder='请选择'
+            onClick={()=>showGenderMenu(id)}
             value={gender === 'male' ? '男': gender === 'female'?'女': ''  }
             readOnly
           />
@@ -80,9 +85,10 @@ const Passenger = memo(function Passenger(props) {
           <label className="label followAdult">同行成人</label>
           <input 
             type="text" 
+            onClick={()=>showFollowAdultMenu(id)}
             className='input followAdult'
             placeholder='请选择'
-            value={followAdult}
+            value={followAdultName}
             readOnly
           />
         </li>
@@ -100,16 +106,48 @@ Passenger.propTypes = {
   birthday: PropTypes.string,
   onRemove: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  showGenderMenu: PropTypes.func.isRequired,
+  showFollowAdultMenu: PropTypes.func.isRequired,
+  showTicketTypeMenu: PropTypes.func.isRequired,
+  followAdultName: PropTypes.string,
 }
 
 const Passengers = memo(function Passengers(props){
-  const {passengers, createAdult, createChild, removePassenger,updatePassenger} = props
+  const {
+    passengers, 
+    createAdult, 
+    createChild, 
+    removePassenger,
+    updatePassenger, 
+    showGenderMenu,
+    showFollowAdultMenu,
+    showTicketTypeMenu
+  } = props
+
+  const nameMap = useMemo(()=>{
+    const ret = {}
+    for (const passenger of passengers) {
+      ret[passenger.id] = passenger.name
+    }
+    return ret
+  }, [passengers])
+
   return(
     <div className='passengers'>
       <ul>
         {
           passengers.map(passenger=>{
-            return <Passenger {...passenger} key={passenger.id} onUpdate={updatePassenger} onRemove={removePassenger}/>
+            return (
+              <Passenger
+                showTicketTypeMenu={showTicketTypeMenu}
+                showFollowAdultMenu={showFollowAdultMenu}
+                showGenderMenu={showGenderMenu}
+                {...passenger}
+                followAdultName={nameMap[passenger.followAdult]}
+                key={passenger.id} 
+                onUpdate={updatePassenger} 
+                onRemove={removePassenger}/>
+              )
           })
         }
       </ul>
@@ -126,6 +164,9 @@ Passengers.propTypes = {
   createChild: PropTypes.func.isRequired,
   removePassenger: PropTypes.func.isRequired,
   updatePassenger: PropTypes.func.isRequired,
+  showGenderMenu: PropTypes.func.isRequired,
+  showFollowAdultMenu: PropTypes.func.isRequired,
+  showTicketTypeMenu: PropTypes.func.isRequired,
 }
 
 export default Passengers

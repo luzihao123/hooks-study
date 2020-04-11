@@ -69,11 +69,12 @@
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "4.3.1"
   },
-  "proxy": "http://192.168.0.104:5000",
+  "proxy": "http://192.168.0.103:5000",
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "format": "eslint src/**/*.{jsx,js} --fix"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -12,17 +12,17 @@ const MenuItem = memo(function MenuItem(props){
     active
   } = props
   return (
-    <li className={classNames({active})} onClick={()=>{onPress(value)}}>
+    <li className={className({active})} onClick={()=>{onPress(value)}}>
       {title}
     </li>
   )
 })
 
 MenuItem.propTypes = {
-  onPress: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
   title: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  activ: PropTypes.bool.isRequired,
+  active: PropTypes.bool.isRequired,
 }
 
 const Menu = memo(function Menu(props){
@@ -53,8 +53,8 @@ const Menu = memo(function Menu(props){
 })
 Menu.propTypes = {
   show: PropTypes.bool.isRequired,
-  options: PropTypes.array.isRequired,
-  onPress: PropTypes.func.isRequired,
+  options: PropTypes.array,
+  onPress: PropTypes.func,
   hideMenu: PropTypes.func.isRequired,
 }
 
